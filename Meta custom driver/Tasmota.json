@@ -1,37 +1,8 @@
 { "name":"Tasmota",
    "manufacturer":"Ton",
    "type":"LIGHT",
-   "version":4,
-   "discover":{
-     "welcomeheadertext":"Choose your Tasmota Instance",
-     "welcomedescription":"powered by meta\nby TonO",
-     "command": 
-         {"type":"mqtt","command":"{\"topic\":\"meta/GetTasmotas\",\"message\":\"Please give me all Tasmotas\",\"replytopic\":\"meta/tasmotadiscovered\"}",
-            "queryresult":[
-               "$.message.NAME.[:]"
-            ]
-         }
-   },
-   "template" : 
-   {
-    "name":"Tasmota",
-   "manufacturer":"Ton",
-   "type":"LIGHT",
-   "version":4,
-   "dynamicname": "DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").ID.replace(\"tele/\",\"\").replace(\"/LWT\",\"\")  DYNAMIK_INST_END",
-   "dynamicid": "DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").ID.replace(\"tele/\",\"\").replace(\"/LWT\",\"\")  DYNAMIK_INST_END",
+   "version":6,
    "listeners" : {
-
-      "HASS_STATE" : 
-      {"label":"",
-        "type":"mqtt",
-        "command":"{\"connection\": \"//$MQTT_IP\",\"topic\":\"tele/$Tasmota_ID/HASS_STATE\"}",   "queryresult":"",
-        "evalwrite" : [ 
-           {"variable" : "Topic",     "value" : "DYNAMIK JSON.parse(\"$Result\").topic"},
-           {"variable" : "Hostname",     "value" :  "DYNAMIK JSON.parse(\"$Result\").message.Hostname"},
-           {"variable" : "Tasmota_IP",     "value" :  "DYNAMIK JSON.parse(\"$Result\").message.IPAddress"}
-        ]
-      },
   
       "STAT" : 
       {"label":"",
@@ -47,9 +18,7 @@
       "MYRESULT": "",
       "Topic": "",
       "Message": "",
-      "Tasmota_ID":"DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").ID.replace(\"tele/\",\"\").replace(\"/LWT\",\"\")  DYNAMIK_INST_END",
-      "Tasmota_IP":"", 
-      "MQTT_IP":"DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").MQTT  DYNAMIK_INST_END",
+      "Tasmota_ID":"## PLACE THE NAME OF YOUR DEVICE (AS KNOWN IN MQTT) HERE ## f.e.Tasmota_TV",
       "DimValue":0,
       "Hostname":""
    },
@@ -57,8 +26,7 @@
       "Topic": {"label": "Topic","listen": "Topic"}, 
       "Message": {"label": "Message","listen": "Message"}, 
       "Hostname": {"label": "Hostname","listen": "Hostname"}, 
-      "Tasmota_IP": {"label": "Tasmota_IP","listen": "Tasmota_IP"}, 
-      "MQTT_IP": {"label": "Connected MQTT","listen": "MQTT_IP"}, 
+      "Tasmota_ID": {"label": "Tasmota_ID","listen": "Tasmota_ID"},
       "MYRESULT": {"label": "MYRESULT","listen": "MYRESULT"} 
    },   
    "sliders":{
@@ -67,48 +35,46 @@
       "evaldo":[{"test":true,"then":"__SetDimvalue","or":""}]}
    },
    "buttons":{
-         "__INITIALISE": {"label": "", "type":"static", "command":"."},
-         "POWER ON":  
-         {"label":"",      
-            "type":"mqtt",
-            "command":"{\"connection\": \"//$MQTT_IP\",\"topic\":\"cmnd/$Tasmota_ID/power\",\"message\":\"on\"}", 
-            "evaldo":[{"test":true,"then":"__INITIALISE","or":""}]
-         },
-         "POWER OFF":  
-         {"label":"",    
-            "type":"mqtt",
-            "command":"{\"connection\": \"//$MQTT_IP\",\"topic\":\"cmnd/$Tasmota_ID/power\",\"message\":\"off\"}",
-            "evaldo":[{"test":true,"then":"__CLEANUP","or":""}]
-         },
-         "Dimmer Up":  
-         {"label":"",    
-            "type":"mqtt",
-            "command":"{\"connection\": \"//$MQTT_IP\",\"topic\":\"cmnd/$Tasmota_ID/Dimmer\",\"message\":\"+\"}", 
-            "evaldo":{"test":true,"then":""}
-         },
-         "Dimmer Down":  
-         {"label":"",    
-            "type":"mqtt",
-            "command":"{\"connection\": \"//$MQTT_IP\",\"topic\":\"cmnd/$Tasmota_ID/Dimmer\",\"message\":\"-\"}"
-         },
-         "TestMQTTRR":
-         {"label":"", 
-            "type":"mqtt",
-               "command":"{\"connection\": \"//192.168.0.40\",\"topic\":\"meta/GetTasmotas\",\"message\":\"Pleese give me all Tasmotas\",\"replytopic\":\"meta/tasmotadiscovered\",\"timeout\":5000 }",
-               "queryresult":"$.message.NAME.[:].ID",   
-            "evalwrite" : [ 
-               {"variable" : "MYRESULT",     "value" : "DYNAMIK \"$Result\""}
-               ]
-         },
-   
-         "__SetDimvalue":  
-         {"label":"",    
-            "type":"mqtt",
-            "command":"{\"connection\": \"//$MQTT_IP\",\"topic\":\"cmnd/$Tasmota_ID/Dimmer\",\"message\":\"$DimValue\"}"
-         }
-      }   
-   }
+      "__INITIALISE": {"label": "", "type":"static", "command":"."},
+      "POWER ON":  
+      {"label":"",      
+         "type":"mqtt",
+         "command":"{\"topic\":\"cmnd/$Tasmota_ID/power\",\"message\":\"on\"}"
+      },
+      "POWER OFF":  
+      {"label":"",    
+         "type":"mqtt",
+         "command":"{\"topic\":\"cmnd/$Tasmota_ID/power\",\"message\":\"off\"}"
+      },
+      "LIGHT ON":  
+      {"label":"",      
+         "type":"mqtt",
+         "command":"{\"topic\":\"cmnd/$Tasmota_ID/power\",\"message\":\"on\"}"
+      },
+      "LIGHT OFF":  
+      {"label":"",    
+         "type":"mqtt",
+         "command":"{\"topic\":\"cmnd/$Tasmota_ID/power\",\"message\":\"off\"}"
+      },
+      "Dimmer Up":  
+      {"label":"",    
+         "type":"mqtt",
+         "command":"{\"topic\":\"cmnd/$Tasmota_ID/Dimmer\",\"message\":\"+\"}", 
+         "evaldo":{"test":true,"then":""}
+      },
+      "Dimmer Down":  
+      {"label":"",    
+         "type":"mqtt",
+         "command":"{\"topic\":\"cmnd/$Tasmota_ID/Dimmer\",\"message\":\"-\"}"
+      },
+      "__SetDimvalue":  
+      {"label":"",    
+         "type":"mqtt",
+         "command":"{\"topic\":\"cmnd/$Tasmota_ID/Dimmer\",\"message\":\"$DimValue\"}"
+      }
+   }   
 }
+
 
 
  
